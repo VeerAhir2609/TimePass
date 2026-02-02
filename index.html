@@ -8,12 +8,12 @@
 <style>
   :root{
     --bg1: #ffe6f0;
-    --bg2: #fff;
+    --bg2: #fff0f5;
     --pink: #ff4d6d;
     --green: #2ecc71;
+    --bubble: rgba(255,77,109,0.2);
   }
 
-  /* Respect reduced motion preference */
   @media (prefers-reduced-motion: reduce) {
     * { animation: none !important; transition: none !important; }
   }
@@ -27,17 +27,40 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+  }
+
+  /* Floating bubbles behind the GIF */
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--bubble);
+    animation: rise 6s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes rise {
+    0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
   }
 
   .card {
     text-align: center;
     z-index: 3;
     max-width: 90%;
+    padding: 20px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #fff0f5, #ffe6f0);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
   }
 
   img.hero {
     width: 230px;
+    border-radius: 20px; /* makes GIF look like it blends */
     animation: float 3s ease-in-out infinite;
+    background: transparent; /* ensure transparent GIF blends */
   }
 
   @keyframes float {
@@ -92,7 +115,6 @@
     100% { transform: scale(1); opacity: 1; }
   }
 
-  /* HEART RAIN */
   .heart {
     position: fixed;
     top: -20px;
@@ -110,12 +132,10 @@
     }
   }
 
-  /* Ensure result is above hearts */
   #result {
     z-index: 4;
   }
 
-  /* Responsive tweaks */
   @media (max-width: 420px) {
     img.hero { width: 160px; }
     .buttons { width: 260px; height: 90px; }
@@ -130,7 +150,8 @@
 </audio>
 
 <div class="card" id="main" role="region" aria-labelledby="mainTitle">
-  <img class="hero" src="https://tenor.com/en-IN/view/bubu-dudu-sseeyall-gif-15804373003691162163" alt="Cute character">
+  <!-- You can replace this with Tenor embed if you like -->
+  <img class="hero" src="WhatsApp Video 2026-02-02 at 6.56.01 PM.mp4" alt="Cute character">
   <h1 id="mainTitle">Naraz ho kya? 🥺</h1>
 
   <div class="buttons" role="group" aria-label="Response buttons">
@@ -140,7 +161,7 @@
 </div>
 
 <div class="card hidden" id="result" role="status" aria-live="polite">
-  <img src="https://tenor.com/en-IN/view/bubu-dudu-images-bubu-dudu-love-bubu-dudu-cute-bubu-dudu-stickers-bubu-dudu-funny-gif-8168626272256828760" alt="Happy character">
+  <img src="WhatsApp Video 2026-02-02 at 6.56.30 PM.mp4" alt="Happy character">
   <h1 class="love">That’s my Chakaa 💖🥰</h1>
 </div>
 
@@ -151,71 +172,56 @@
   const result = document.getElementById("result");
   const sound = document.getElementById("loveSound");
 
-  // Track heart interval so we can avoid duplicates and clear it
+  // HEART RAIN
   let heartIntervalId = null;
 
   function moveYes() {
-    // smaller movement on very small screens
     const maxX = Math.min(240, window.innerWidth * 0.5);
     const x = Math.random() * maxX - maxX / 2;
     const y = Math.random() * 120 - 60;
     yes.style.transform = `translate(${x}px, ${y}px)`;
   }
 
-  // Move on mouseenter and when focused (keyboard users)
   yes.addEventListener("mouseenter", moveYes);
   yes.addEventListener("focus", moveYes);
-  // touchstart to make button "slippery" on touch devices
-  yes.addEventListener("touchstart", (e) => {
-    // prevent generating a synthetic mouse event that could click the button
-    e.preventDefault();
-    moveYes();
-  }, {passive: false});
+  yes.addEventListener("touchstart", (e) => { e.preventDefault(); moveYes(); }, {passive: false});
 
   noBtn.addEventListener("click", () => {
-    // play audio: user gesture so should be allowed; handle promise rejections
     sound.play().catch(() => {});
-    // hide main and show result
     main.classList.add("hidden");
     result.classList.remove("hidden");
-    // disable button so user can't re-trigger repeatedly
     noBtn.disabled = true;
     startHearts();
   });
 
   function startHearts() {
-    if (heartIntervalId !== null) return; // already started
-    // create hearts for a limited duration (e.g. 10s) to avoid runaway
+    if (heartIntervalId !== null) return;
     heartIntervalId = setInterval(() => {
       const heart = document.createElement("div");
       heart.className = "heart";
       heart.textContent = "💖";
       heart.style.left = Math.random() * 100 + "vw";
-      const duration = Math.random() * 2 + 3; // 3s to 5s
+      const duration = Math.random() * 2 + 3;
       heart.style.animationDuration = duration + "s";
       document.body.appendChild(heart);
-
-      // Remove after animation end + small buffer
-      setTimeout(() => {
-        heart.remove();
-      }, (duration + 0.2) * 1000);
+      setTimeout(() => heart.remove(), (duration + 0.2) * 1000);
     }, 250);
-
-    // stop creating new hearts after 10 seconds
-    setTimeout(() => {
-      if (heartIntervalId !== null) {
-        clearInterval(heartIntervalId);
-        heartIntervalId = null;
-      }
-    }, 10_000);
+    setTimeout(() => { clearInterval(heartIntervalId); heartIntervalId=null; }, 10_000);
   }
 
-  // Optional: clean up if user navigates away
+  // Floating bubbles behind GIF
+  for(let i=0;i<15;i++){
+    const bubble=document.createElement('div');
+    bubble.className='bubble';
+    bubble.style.width=bubble.style.height=(Math.random()*30+15)+'px';
+    bubble.style.left=Math.random()*100+'vw';
+    bubble.style.animationDuration=(Math.random()*4+4)+'s';
+    bubble.style.animationDelay=(Math.random()*4)+'s';
+    document.body.appendChild(bubble);
+  }
+
   window.addEventListener('beforeunload', () => {
-    if (heartIntervalId !== null) {
-      clearInterval(heartIntervalId);
-      heartIntervalId = null;
-    }
+    if (heartIntervalId !== null) { clearInterval(heartIntervalId); heartIntervalId=null; }
   });
 </script>
 
