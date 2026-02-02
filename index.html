@@ -7,8 +7,7 @@
 
 <style>
   :root{
-    --bg1: #ffe6f0;
-    --bg2: #fff0f5;
+    --bg: #ffffff; /* White background */
     --pink: #ff4d6d;
     --green: #2ecc71;
     --bubble: rgba(255,77,109,0.2);
@@ -23,7 +22,7 @@
     height: 100vh;
     overflow: hidden;
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    background: var(--bg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -52,15 +51,15 @@
     max-width: 90%;
     padding: 20px;
     border-radius: 20px;
-    background: linear-gradient(135deg, #fff0f5, #ffe6f0);
+    background: #ffffff; /* Card background white */
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
   }
 
-  img.hero {
+  video.hero {
     width: 230px;
-    border-radius: 20px; /* makes GIF look like it blends */
+    border-radius: 20px; 
     animation: float 3s ease-in-out infinite;
-    background: transparent; /* ensure transparent GIF blends */
+    background: transparent;
   }
 
   @keyframes float {
@@ -137,7 +136,7 @@
   }
 
   @media (max-width: 420px) {
-    img.hero { width: 160px; }
+    video.hero { width: 160px; }
     .buttons { width: 260px; height: 90px; }
   }
 </style>
@@ -150,8 +149,8 @@
 </audio>
 
 <div class="card" id="main" role="region" aria-labelledby="mainTitle">
-  <!-- You can replace this with Tenor embed if you like -->
-  <img class="hero" src="WhatsApp Video 2026-02-02 at 6.56.01 PM.mp4" alt="Cute character">
+  <!-- Use video for faster loading than mp4 GIF via img -->
+  <video class="hero" src="WhatsApp Video 2026-02-02 at 6.56.01 PM.mp4" autoplay muted loop playsinline></video>
   <h1 id="mainTitle">Naraz ho kya? 🥺</h1>
 
   <div class="buttons" role="group" aria-label="Response buttons">
@@ -161,7 +160,7 @@
 </div>
 
 <div class="card hidden" id="result" role="status" aria-live="polite">
-  <img src="WhatsApp Video 2026-02-02 at 6.56.30 PM.mp4" alt="Happy character">
+  <video class="hero" src="WhatsApp Video 2026-02-02 at 6.56.30 PM.mp4" autoplay muted loop playsinline></video>
   <h1 class="love">That’s my Chakaa 💖🥰</h1>
 </div>
 
